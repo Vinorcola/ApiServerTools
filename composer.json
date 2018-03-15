@@ -1,0 +1,27 @@
+{
+    "name": "vinorcola/api-server-tools",
+    "type": "library",
+    "description": "Api server tools.",
+    "keyword": [
+        "Api",
+        "Server",
+        "Tools",
+        "Helper"
+    ],
+    "licence": "MIT",
+    "authors": [
+        {
+            "name": "Vinorcola",
+            "email": "vinorcola@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "symfony/http-kernel": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vinorcola\\ApiServerTools\\": "src"
+        }
+    }
+}
