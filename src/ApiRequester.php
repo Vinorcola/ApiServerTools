@@ -2,6 +2,8 @@
 
 namespace Vinorcola\ApiServerTools;
 
+use RuntimeException;
+
 class ApiRequester
 {
     /**
@@ -25,6 +27,9 @@ class ApiRequester
             curl_setopt($connection, CURLOPT_POSTFIELDS, $body);
         }
         $rawResult = curl_exec($connection);
+        if ($rawResult === false) {
+            throw new RuntimeException(curl_error($connection));
+        }
         curl_close($connection);
 
         return json_decode($rawResult, true);
