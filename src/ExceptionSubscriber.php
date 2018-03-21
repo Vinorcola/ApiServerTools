@@ -37,7 +37,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
         $headers = $exception instanceof HttpExceptionInterface ?
             $exception->getHeaders() :
             [];
-        $response = new Response([], $exception->getMessage(), $status, $headers);
+        $response = new Response([], $exception, $status, $headers);
         $event->setResponse($response);
     }
 }
