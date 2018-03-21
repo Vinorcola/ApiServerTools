@@ -16,19 +16,18 @@ class Response extends JsonResponse
         if ($error) {
             if ($error instanceof InvalidInputException) {
                 $payload['error'] = $error->getMessage();
-                $payload['data'] = [
+                $data = [
                     'errorDetails' => $error->getErrorMessages(),
                 ];
             } elseif ($error instanceof Throwable) {
                 $payload['error'] = $error->getMessage();
-                $payload['data'] = [];
+                $data = [];
             } else {
                 $payload['error'] = (string) $error;
-                $payload['data'] = [];
+                $data = [];
             }
-        } else {
-            $payload['data'] = $data;
         }
+        $payload['data'] = (object) $data;
 
         parent::__construct($payload, $status, $headers);
     }
