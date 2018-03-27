@@ -2,7 +2,9 @@
 
 namespace Vinorcola\ApiServerTools;
 
+use stdClass;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 class InvalidInputException extends BadRequestHttpException
@@ -37,12 +39,41 @@ class InvalidInputException extends BadRequestHttpException
      */
     public function getErrorMessages(): array
     {
-        $messages = [];
+        $errorMessages = [];
         foreach ($this->errors as $error) {
             /** @var ConstraintViolationInterface $error */
-            $messages[] = $error->getMessage();
+            if (!key_exists($error->getPropertyPath(), $errorMessages)) {
+                $errorMessages[$error->getPropertyPath()] = [];
+            }
+            $errorMessages[$error->getPropertyPath()][] = [
+                'message' => $error->getMessage(),
+                'key'     => $error->getMessageTemplate(),
+                'params'  => $this->cleanParameters($error->getParameters()),
+            ];
         }
 
-        return $messages;
+        return $errorMessages;
+    }
+
+    /**
+     * Clean the parameters and return them as an object to force {} when encoding as JSON.
+     *
+     * @param array $parameters
+     * @return stdClass
+     */
+    private function cleanParameters(array $parameters): stdClass
+    {
+        $result = new stdClass();
+        foreach ($parameters as $key => $parameter) {
+            if ($key === '{{ value }}') {
+                continue;
+            }
+            if (preg_match('/^\{\{ (.+) \}\}$/', $key, $matches)) {
+                $key = $matches[1];
+            }
+            $result->$key = $parameter;
+        }
+
+        return $result;
     }
 }
